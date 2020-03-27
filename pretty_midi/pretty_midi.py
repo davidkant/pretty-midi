@@ -943,7 +943,8 @@ class PrettyMIDI(object):
             return np.array([])
         # Get synthesized waveform for each instrument
         waveforms = [i.fluidsynth(fs=fs,
-                                  sf2_path=sf2_path) for i in self.instruments]
+                                  sf2_path=sf2_path,
+                                  stereo=stereo) for i in self.instruments]
         # Allocate output waveform, with #sample = max length of all waveforms
         if stereo:
             synthesized = np.zeros((2, np.max([w.shape[0] for w in waveforms])))

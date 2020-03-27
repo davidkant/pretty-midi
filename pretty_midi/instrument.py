@@ -524,8 +524,12 @@ class Instrument(object):
             current_sample = int(fs*current_time)
             end = int(fs*(current_time + event[0]))
             if stereo:
-                samples = fl.get_samples(end - current_sample)
-                synthesized[:, current_sample:end] += samples
+                samples_channel_0 = fl.get_samples(end - current_sample)[::2]
+                samples_channel_1 = fl.get_samples(end - current_sample)[1::2]
+                synthesized[0, current_sample:end] += samples_channel_0
+                synthesized[1, current_sample:end] += samples_channel_1
+                # samples = fl.get_samples(end - current_sample).reshape((2, -1), order='F')
+                # synthesized[:, current_sample:end] += samples
             else:
                 samples = fl.get_samples(end - current_sample)[::2]
                 synthesized[current_sample:end] += samples

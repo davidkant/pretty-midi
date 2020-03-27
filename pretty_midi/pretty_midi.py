@@ -953,7 +953,7 @@ class PrettyMIDI(object):
         # Sum all waveforms in
         for waveform in waveforms:
             if stereo:
-                synthesized[:, :waveform.shape[0]] += waveform
+                synthesized[:, :waveform.shape[1]] += waveform
             else:
                 synthesized[:waveform.shape[0]] += waveform
         # Normalize

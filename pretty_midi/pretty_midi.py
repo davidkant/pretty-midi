@@ -947,7 +947,7 @@ class PrettyMIDI(object):
                                   stereo=stereo) for i in self.instruments]
         # Allocate output waveform, with #sample = max length of all waveforms
         if stereo:
-            synthesized = np.zeros((2, np.max([w.shape[0] for w in waveforms])))
+            synthesized = np.zeros((2, np.max([w.shape[1] for w in waveforms])))
         else: 
             synthesized = np.zeros(np.max([w.shape[0] for w in waveforms]))
         # Sum all waveforms in

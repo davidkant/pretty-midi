@@ -430,7 +430,7 @@ class Instrument(object):
 
         return synthesized
 
-    def fluidsynth(self, fs=44100, sf2_path=None):
+    def fluidsynth(self, fs=44100, sf2_path=None, stereo=True):
         """Synthesize using fluidsynth.
 
         Parameters
@@ -505,7 +505,10 @@ class Instrument(object):
         event_list[-1][0] = 1.
         # Pre-allocate output array
         total_time = current_time + np.sum([e[0] for e in event_list])
-        synthesized = np.zeros(int(np.ceil(fs*total_time)))
+        if stereo:
+            synthesized = np.zeros((2, int(np.ceil(fs*total_time))))
+        else:
+            synthesized = np.zeros(int(np.ceil(fs*total_time)))
         # Iterate over all events
         for event in event_list:
             # Process events based on type
@@ -520,8 +523,12 @@ class Instrument(object):
             # Add in these samples
             current_sample = int(fs*current_time)
             end = int(fs*(current_time + event[0]))
-            samples = fl.get_samples(end - current_sample)[::2]
-            synthesized[current_sample:end] += samples
+            if stereo:
+                samples = fl.get_samples(end - current_sample)
+                synthesized[:, current_sample:end] += samples
+            else:
+                samples = fl.get_samples(end - current_sample)[::2]
+                synthesized[current_sample:end] += samples
             # Increment the current sample
             current_time += event[0]
         # Close fluidsynth

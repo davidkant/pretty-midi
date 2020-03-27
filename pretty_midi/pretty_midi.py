@@ -918,7 +918,7 @@ class PrettyMIDI(object):
         synthesized /= np.abs(synthesized).max()
         return synthesized
 
-    def fluidsynth(self, fs=44100, sf2_path=None):
+    def fluidsynth(self, fs=44100, sf2_path=None, stereo=True):
         """Synthesize using fluidsynth.
 
         Parameters
@@ -945,10 +945,16 @@ class PrettyMIDI(object):
         waveforms = [i.fluidsynth(fs=fs,
                                   sf2_path=sf2_path) for i in self.instruments]
         # Allocate output waveform, with #sample = max length of all waveforms
-        synthesized = np.zeros(np.max([w.shape[0] for w in waveforms]))
+        if stereo:
+            synthesized = np.zeros((2, np.max([w.shape[0] for w in waveforms])))
+        else: 
+            synthesized = np.zeros(np.max([w.shape[0] for w in waveforms]))
         # Sum all waveforms in
         for waveform in waveforms:
-            synthesized[:waveform.shape[0]] += waveform
+            if stereo:
+                synthesized[:, :waveform.shape[0]] += waveform
+            else:
+                synthesized[:waveform.shape[0]] += waveform
         # Normalize
         synthesized /= np.abs(synthesized).max()
         return synthesized
